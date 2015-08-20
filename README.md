@@ -30,7 +30,7 @@ Following this a series of core functions are added onto the amd_core object. Th
 |loaded|[*boolean*] True/False for if the script successfully loaded.|
 
 
-##Minimal example of how to utilize amd_core.require.##
+##Example of how to utilize amd_core.require.##
 To try yourself: https://alexdussaq.info/amd_core/
 
     amd_core.require({
