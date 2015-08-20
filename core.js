@@ -26,7 +26,7 @@ var amd_core = (function () {
     };
 
     //jQuery URL below is for 2.1.4
-    jQueryURL = 'https://raw.githubusercontent.com/adussaq/amd_core/master/jquery.min.js';
+    jQueryURL = 'https://alexdussaq.info/jquery.min.js';
     //polyfill links to the github most recent version
     polyfillPromiseURL = "https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise.min.js";
 
