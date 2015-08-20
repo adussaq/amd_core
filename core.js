@@ -55,7 +55,6 @@ var amd_core = (function () {
 
         successFunc = function (resolve) {
             return function () {
-                loaded[url] = true;
                 resolve(url);
             };
         };
@@ -140,7 +139,6 @@ var amd_core = (function () {
         } else {
             list.async = [];
         }
-        console.log(list);
         return ret;
     };
 
@@ -159,9 +157,10 @@ var amd_core = (function () {
     require = function (reqObj) {
         var prom, promises, i, j, sequenceFunc,
             url, sequence, displayError,
-            list, callback;
+            list, callback, ret;
 
         promises = [];
+        ret = [];
         list = reqObj;
         callback = reqObj.callback;
 
@@ -171,7 +170,9 @@ var amd_core = (function () {
         };
         sequenceFunc = function (url) {
             return function () {
-                return ajaxPromise(url);
+                var promS = ajaxPromise(url);
+                ret.push({url: url, promise: promS});
+                return promS;
             };
         };
 
@@ -181,8 +182,11 @@ var amd_core = (function () {
             //Start async
             for (i = 0; i < list.async.length; i += 1) {
                 url = list.async[i];
-                prom = ajaxPromise(url).catch(displayError);
-                promises.push(prom);
+
+                prom = ajaxPromise(url);
+                //no catch on return, catch on one for 'all' eval
+                ret.push({url: url, promise: prom});
+                promises.push(prom.catch(displayError));
             }
 
             //Now on to the ordered lists
@@ -200,7 +204,24 @@ var amd_core = (function () {
 
         //Now that we have spun off all of our ajax calls, when it is 
         // all done call the callback
-        Promise.all(promises).then(function (x) { callback(x); });
+        Promise.all(promises).then(function () {
+            var ind, promArr, passFunc, failFunc;
+            promArr = [];
+            passFunc = function (i) {
+                return function () {
+                    ret[i].loaded = true;
+                };
+            };
+            failFunc = function (i) {
+                return function () {
+                    ret[i].loaded = false;
+                };
+            };
+            for (ind = 0; ind < ret.length; ind += 1) {
+                promArr.push(ret[ind].promise.then(passFunc(ind), failFunc(ind)));
+            }
+            Promise.all(promArr).then(function () { callback(ret); });
+        });
     };
 
     getJquery = function (callback, error) {
@@ -212,7 +233,7 @@ var amd_core = (function () {
             if (req.status === 200) {
                 // Resolve the promise with the response text
                 eval(req.response);
-                console.log('got jQuery');
+                console.log('Got jQuery, other loading will now begin.');
                 callback(req.response);
             } else {
                 // Otherwise reject with the status text
