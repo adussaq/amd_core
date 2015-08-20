@@ -69,18 +69,3 @@ To try yourself: https://alexdussaq.info/amd_core/
         }
 
     });
-    
-
-##simpleCubic.jseo##
-    {
-        func: function (xVector, P) {
-            return P[0] * Math.pow(xVector[0],3) + P[1];
-        },
-        setInitial: function (x_mat, y_vec) {
-            var A = ( y_vec[1] - y_vec[0] ) / (Math.pow(x_mat[1][0], 3) - Math.pow(x_mat[0][0], 3));
-            var B = y_vec[0] - A * Math.pow(x_mat[0][0], 3);
-            return [A, B];
-        }
-    }
-
-These modules were combined with the following visualization libraries: google chart tools (https://developers.google.com/chart/), jqmath (http://mathscribe.com/author/jqmath.html), and bootstrap (http://getbootstrap.com/) to create a tool to visualize individual curve fits for a unique biological data set. This is avaliable at http://kinome.github.io/demo-cf/#model.
