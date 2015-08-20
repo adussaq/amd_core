@@ -157,7 +157,7 @@ var amd_core = (function () {
     require = function (reqObj) {
         var prom, promises, i, j, sequenceFunc,
             url, sequence, displayError,
-            list, callback, ret;
+            list, callback, ret, addEscaped;
 
         promises = [];
         ret = [];
@@ -168,11 +168,25 @@ var amd_core = (function () {
             console.error('Was unable to load module: ', err);
             //Do not return err so 'all' will still resolve
         };
-        sequenceFunc = function (url) {
+        sequenceFunc = function (url, i, j) {
             return function () {
                 var promS = ajaxPromise(url);
                 ret.push({url: url, promise: promS});
+                promS.catch(addEscaped(i, j));
                 return promS;
+            };
+        };
+
+        addEscaped = function (i, j) {
+            //This add the rest of the chain that did not get picked up...
+            return function () {
+                var ind;
+                for (ind = j + 1; ind < list.ordered[i].length; ind += 1) {
+                    url = list.ordered[i][ind];
+                    ret.push({url: url,
+                        promise: Promise.reject('never reached'),
+                        loaded: false});
+                }
             };
         };
 
@@ -194,10 +208,10 @@ var amd_core = (function () {
                 sequence = Promise.resolve();
                 for (j = 0; j < list.ordered[i].length; j += 1) {
                     url = list.ordered[i][j];
-                    sequence = sequence.then(sequenceFunc(url));
+                    sequence = sequence.then(sequenceFunc(url, i, j));
                 }
                 //Catch the error so we know where it stopped
-                sequence.catch(displayError);
+                sequence = sequence.catch(displayError);
                 promises.push(sequence);
             }
         }

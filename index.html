@@ -3,7 +3,52 @@
 		<script src="core.js"></script>
 	</head>
 	<body>
+		<h2>
+			AMD_CORE
+		</h2>
 		Welcome to my core page, this loads jQuery, then polyfills Promises, and loads other required scripts. Open the console to experiment.<br />
 		<b>Find full documentation and code at: <a href="https://github.com/adussaq/amd_core">https://github.com/adussaq/amd_core</a>
+
+		<h3>
+			Fun example of amd_core.require
+		</h3>
+		<pre style="margin-left:25px; margin-top:-5px"><code>
+amd_core.require({
+    async: ["name/sue.js", "name/billy.js", "name/kelly.js"], //We do not care the order we are loaded
+    ordered: [  //Each one of these will start loading at their base node at the same time
+                // In otherwords John and Sally will start loading immediately, once john is done
+                // Lou, and bob will start loading, etc.
+        [
+            "name/john.js",
+            "name/lou.js", // I cant load without john
+            "name/tom.js" // I cant load without john and lou
+        ],
+        [
+            "name/john.js", // This will still only be loaded once
+            "name/bob.js" // I cant load without john
+        ],
+        [
+            "name/john.js", // This will still only be loaded once
+            "name/lou.js", // This will still only be loaded once, but I cant load without john
+            "name/cindy.js" // I cant load without john and lou
+        ],
+        [
+            "name/sally.js",
+            "name/harry.js" //I can't load without sally
+        ]
+    ],
+    callback: function (x) {
+        for (var i = 0; i < x.length; i += 1) {
+            var name = x[i].url.replace(/name\/|\.js/g, "");
+            if (x[i].loaded) {
+                console.log(name + ' is here!');
+            } else {
+                console.log(name + ' never showed up...');
+            }
+        }
+    }
+});
+
+		</code></pre>
 	</body>
 </html>
