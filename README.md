@@ -21,7 +21,7 @@ Following this a series of core functions are added onto the amd_core object. Th
 |---------------|----------------|
 |async|[*optional, array*] If included, this must be an array of urls [*string*]. These will all be loaded asynchronously, the more modules you can include here the faster your page will load. |
 |ordered|[*optional, 2D arrary*] If included, this must be an array of arrays, each internal array is an array of urls [*string*] for scripts that depend on being loaded one at a time sequentially. |
-|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an array of url_objs [*object*]. |
+|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an array of url_objs *ORDER WILL NOT REMAIN THE SAME* [*object*]. |
 
 ###**url_objs**###
 |Property|Description|
