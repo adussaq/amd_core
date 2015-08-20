@@ -51,7 +51,7 @@ var amd_core = (function () {
 
     //Funciton definitions
     ajaxPromise = function (url) {
-        var successFunc, errorFunc;
+        var successFunc, errorFunc, promise, makePromise;
 
         successFunc = function (resolve) {
             return function () {
@@ -70,19 +70,34 @@ var amd_core = (function () {
             };
         };
 
-        return new Promise(function (resolve, reject) {
-            //Check if it is alredy loaded
-            if (loaded[url]) {
-                resolve(url);
-            } else {
+        makePromise = function () {
+            return new Promise(function (resolve, reject) {
+                //Check if it is alredy loaded
                 $.ajax({
                     url: url,
                     dataType: "script",
                     success: successFunc(resolve),
                     error: errorFunc(reject)
                 });
-            }
-        });
+            });
+        };
+
+        //If this has already been called just return the promise
+            // If the promise fails, reset the loaded[url] thing to 
+            // false so the user can try again...
+        if (loaded[url]) {
+            promise = loaded[url];
+            promise.catch(function () {
+                //Reset loaded so this can be tried again...
+                loaded[url] = false;
+            });
+        } else {
+            promise = makePromise();
+        }
+
+        loaded[url] = promise;
+
+        return promise;
     };
 
     checkcallback = function (cb) {
