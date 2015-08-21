@@ -1,7 +1,7 @@
 # amd_core
 
 For a working example please go to: https://alexdussaq.info/amd_core/<br />
-The same example is shown below and is included as index.html in this directory.
+The same <a href="https://github.com/adussaq/amd_core#fun-example-of-how-to-utilize-amd_corerequire">example</a> is shown below and is included as index.html in this directory.
 
 This package insures that the following scripts are loaded before any calculation has taken place:
 * jquery-2.1.4.min.js
@@ -12,7 +12,7 @@ Following this a series of core functions are added onto the amd_core object. Th
 ###**amd_core**###
 |Property|Description|
 |---------------|----------------|
-|require|[*function*] Following the loading of the above required list, this loads a list of scripts described by it's input: **require_object** [*required, object*]. If any script has already been loaded, it will not be loaded again. Once all scripts have loaded it executes the callback function described in the same object. |
+|require|[*function*] Following the loading of the above required list, this loads a list of scripts described by it's input: <a href="https://github.com/adussaq/amd_core#require_object">**require_object**</a> [*required, object*]. If any script has already been loaded, it will not be loaded again. Once all scripts have loaded it executes the callback function described in the same object. |
 |isArray|[*function*] Takes in any JavaScript object, and returns true if the object is an array, false otherwise. |
 
 
@@ -21,9 +21,9 @@ Following this a series of core functions are added onto the amd_core object. Th
 |---------------|----------------|
 |async|[*optional, array*] If included, this must be an array of urls [*string*]. These will all be loaded asynchronously, the more modules you can include here the faster your page will load. |
 |ordered|[*optional, 2D arrary*] If included, this must be an array of arrays, each internal array is an array of urls [*string*] for scripts that depend on being loaded one at a time sequentially. |
-|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an object of url_objs [*object*] with keys being the urls of the scripts passed in. |
+|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an object of <a href="https://github.com/adussaq/amd_core#url_obj">**url_obj**</a>s [*object*] with keys being the urls of the scripts passed in. |
 
-###**url_objs**###
+###**url_obj**###
 |Property|Description|
 |---------------|----------------|
 |url|[*string*] Address of script loaded|
