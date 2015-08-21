@@ -61,13 +61,13 @@ Each person in the ordered lists requires the hello function from the people bel
         ],
         callback: function (x) {
             for (var url in x) {
+                //Utilizes the promises to display results
                 if (x.hasOwnProperty(url)) {
-                    var name = url.replace(/name\/|\.js/g, "");
-                    if (x[url].loaded) {
-                        console.log(name + ' is here!');
-                    } else {
-                        console.log(name + ' never showed up...');
-                    }
+                    x[url].promise.then(function (name) {
+                        console.log(name.replace(/name\/|\.js/g, "") + ' is here!');
+                    }).catch(function (x) {
+                        console.error(x);
+                    });
                 }
             }
         }

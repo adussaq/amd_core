@@ -1,16 +1,18 @@
 <html>
 	<head>
-		<script src="amd_core-1.0.0.min.js"></script>
+		
 	</head>
 	<body>
+    <script  type="text/javascript" src="amd_core-1.0.0.min.js"></script>
+
 		<h2>
 			AMD_CORE
 		</h2>
 		Welcome to my core page, this loads jQuery, then polyfills Promises, and loads other required scripts. Open the console to experiment.<br />
-		<b>Find full documentation and code at: <a href="https://github.com/adussaq/amd_core">https://github.com/adussaq/amd_core</a>
+		Find full documentation and code at: <a href="https://github.com/adussaq/amd_core">https://github.com/adussaq/amd_core</a>
 
 		<h3>
-			Fun example of amd_core.require
+			Fun example of amd_core.require, network timeline of this is pictured below.
 		</h3>
 		<pre style="margin-left:25px; margin-top:-5px"><code>
  amd_core.require({
@@ -39,18 +41,19 @@
     ],
     callback: function (x) {
         for (var url in x) {
+            //Utilizes the promises to display results
             if (x.hasOwnProperty(url)) {
-                var name = url.replace(/name\/|\.js/g, "");
-                if (x[url].loaded) {
-                    console.log(name + ' is here!');
-                } else {
-                    console.log(name + ' never showed up...');
-                }
+                x[url].promise.then(function (name) {
+                    console.log(name.replace(/name\/|\.js/g, "") + ' is here!');
+                }).catch(function (x) {
+                    console.error(x);
+                });
             }
         }
     }
 });
-
 		</code></pre>
+        <h3>At 50Kbps network timeline graph.</h3>
+        <img src="timeline.png">
 	</body>
 </html>
