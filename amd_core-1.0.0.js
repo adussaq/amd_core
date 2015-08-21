@@ -232,7 +232,7 @@ var amd_core = (function () {
                         // Prerequisits 
                     retObj[returl] = {
                         url: returl,
-                        promise: Promise.reject('never reached')
+                        promise: Promise.reject("Script never reached, at least one of the prerequisites failed to load.")
                     };
                 }
                 promArr.push(retObj[returl].promise.then(passFunc(returl), failFunc(returl)));
