@@ -21,7 +21,7 @@ Following this a series of core functions are added onto the amd_core object. Th
 |---------------|----------------|
 |async|[*optional, array*] If included, this must be an array of urls [*string*]. These will all be loaded asynchronously, the more modules you can include here the faster your page will load. |
 |ordered|[*optional, 2D arrary*] If included, this must be an array of arrays, each internal array is an array of urls [*string*] for scripts that depend on being loaded one at a time sequentially. |
-|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an array of url_objs *ORDER WILL NOT REMAIN THE SAME* [*object*]. |
+|callback|[*required, function*] Executed upon completion of loading of all scripts described above. The callback is passed an object of url_objs [*object*] with keys being the urls of the scripts passed in. |
 
 ###**url_objs**###
 |Property|Description|
@@ -59,12 +59,14 @@ To try yourself: https://alexdussaq.info/amd_core/
             ]
         ],
         callback: function (x) {
-            for (var i = 0; i < x.length; i += 1) {
-                var name = x[i].url.replace(/name\/|\.js/g, "");
-                if (x[i].loaded) {
-                    console.log(name + ' is here!');
-                } else {
-                    console.log(name + ' never showed up...');
+            for (var url in x) {
+                if (x.hasOwnProperty(url)) {
+                    var name = url.replace(/name\/|\.js/g, "");
+                    if (x[url].loaded) {
+                        console.log(name + ' is here!');
+                    } else {
+                        console.log(name + ' never showed up...');
+                    }
                 }
             }
         }

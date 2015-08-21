@@ -157,10 +157,11 @@ var amd_core = (function () {
     require = function (reqObj) {
         var prom, promises, i, j, sequenceFunc,
             url, sequence, displayError,
-            list, callback, ret, addEscaped;
+            list, callback, ret, retObj;
 
         promises = [];
         ret = [];
+        retObj = {};
         list = reqObj;
         callback = reqObj.callback;
 
@@ -168,30 +169,18 @@ var amd_core = (function () {
             console.error('Was unable to load module: ', err);
             //Do not return err so 'all' will still resolve
         };
-        sequenceFunc = function (url, i, j) {
+        sequenceFunc = function (url) {
             return function () {
                 var promS = ajaxPromise(url);
-                ret.push({url: url, promise: promS});
-                promS.catch(addEscaped(i, j));
                 return promS;
-            };
-        };
-
-        addEscaped = function (i, j) {
-            //This add the rest of the chain that did not get picked up...
-            return function () {
-                var ind;
-                for (ind = j + 1; ind < list.ordered[i].length; ind += 1) {
-                    url = list.ordered[i][ind];
-                    ret.push({url: url,
-                        promise: Promise.reject('never reached'),
-                        loaded: false});
-                }
             };
         };
 
         if (checklist(list) && checkcallback(callback)) {
             // If the input is fine...
+
+            ret = ret.concat(list.async);
+            ret = ret.concat.apply(ret, list.ordered);
 
             //Start async
             for (i = 0; i < list.async.length; i += 1) {
@@ -199,7 +188,7 @@ var amd_core = (function () {
 
                 prom = ajaxPromise(url);
                 //no catch on return, catch on one for 'all' eval
-                ret.push({url: url, promise: prom});
+                // ret.push({url: url, promise: prom});
                 promises.push(prom.catch(displayError));
             }
 
@@ -208,7 +197,7 @@ var amd_core = (function () {
                 sequence = Promise.resolve();
                 for (j = 0; j < list.ordered[i].length; j += 1) {
                     url = list.ordered[i][j];
-                    sequence = sequence.then(sequenceFunc(url, i, j));
+                    sequence = sequence.then(sequenceFunc(url));
                 }
                 //Catch the error so we know where it stopped
                 sequence = sequence.catch(displayError);
@@ -219,22 +208,36 @@ var amd_core = (function () {
         //Now that we have spun off all of our ajax calls, when it is 
         // all done call the callback
         Promise.all(promises).then(function () {
-            var ind, promArr, passFunc, failFunc;
+            var ind, returl, promArr, passFunc, failFunc;
             promArr = [];
             passFunc = function (i) {
                 return function () {
-                    ret[i].loaded = true;
+                    retObj[i].loaded = true;
                 };
             };
             failFunc = function (i) {
                 return function () {
-                    ret[i].loaded = false;
+                    retObj[i].loaded = false;
                 };
             };
             for (ind = 0; ind < ret.length; ind += 1) {
-                promArr.push(ret[ind].promise.then(passFunc(ind), failFunc(ind)));
+                returl = ret[ind];
+                if (loaded[returl]) {
+                    retObj[returl] = {
+                        url: returl,
+                        promise: loaded[returl]
+                    };
+                } else {
+                    //Adds any urls that were not got due to failure of
+                        // Prerequisits 
+                    retObj[returl] = {
+                        url: returl,
+                        promise: Promise.reject('never reached')
+                    };
+                }
+                promArr.push(retObj[returl].promise.then(passFunc(returl), failFunc(returl)));
             }
-            Promise.all(promArr).then(function () { callback(ret); });
+            Promise.all(promArr).then(function () { callback(retObj); });
         });
     };
 

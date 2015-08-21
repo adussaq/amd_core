@@ -13,7 +13,7 @@
 			Fun example of amd_core.require
 		</h3>
 		<pre style="margin-left:25px; margin-top:-5px"><code>
-amd_core.require({
+ amd_core.require({
     async: ["name/sue.js", "name/billy.js", "name/kelly.js"], //We do not care the order we are loaded
     ordered: [  //Each one of these will start loading at their base node at the same time
                 // In otherwords John and Sally will start loading immediately, once john is done
@@ -38,12 +38,14 @@ amd_core.require({
         ]
     ],
     callback: function (x) {
-        for (var i = 0; i < x.length; i += 1) {
-            var name = x[i].url.replace(/name\/|\.js/g, "");
-            if (x[i].loaded) {
-                console.log(name + ' is here!');
-            } else {
-                console.log(name + ' never showed up...');
+        for (var url in x) {
+            if (x.hasOwnProperty(url)) {
+                var name = url.replace(/name\/|\.js/g, "");
+                if (x[url].loaded) {
+                    console.log(name + ' is here!');
+                } else {
+                    console.log(name + ' never showed up...');
+                }
             }
         }
     }
