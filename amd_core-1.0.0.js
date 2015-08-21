@@ -13,24 +13,25 @@ var amd_core = (function () {
         polyfillPromises, ajaxPromise,
         requireBuffer, checklist, checkcallback,
         coreObj, redefineCoreFunctions,
-        require, loaded;
+        require, loaded, failed;
 
-
-    //Variable definitions
     requireBuffer = [];
     loaded = {};
-    coreObj = {
-        require: function (reqObj) {
-            requireBuffer.push(reqObj);
-        }
-    };
+    failed = {};
 
     //jQuery URL below is for 2.1.4
     jQueryURL = 'https://alexdussaq.info/amd_core/jquery.min.js';
     //polyfill links to the github most recent version
     polyfillPromiseURL = "https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise.min.js";
-
+    //The remained of the required functions...
     restURL = [];
+
+    //Variable definitions
+    coreObj = {
+        require: function (reqObj) {
+            requireBuffer.push(reqObj);
+        }
+    };
 
     //Global Function Definitions
     coreObj.isArray = (function () {
@@ -61,8 +62,8 @@ var amd_core = (function () {
 
         errorFunc = function (reject) {
             return function (err) {
-                loaded[url] = false;
-                reject(new Error('failed to get: ' + url +
+                failed[url] = true;
+                reject(new Error('Failed to get: ' + url +
                         " statusText: " + err.statusText +
                         " status: " + err.status
                     ));
@@ -84,12 +85,8 @@ var amd_core = (function () {
         //If this has already been called just return the promise
             // If the promise fails, reset the loaded[url] thing to 
             // false so the user can try again...
-        if (loaded[url]) {
+        if (loaded[url] && !failed[url]) {
             promise = loaded[url];
-            promise.catch(function () {
-                //Reset loaded so this can be tried again...
-                loaded[url] = false;
-            });
         } else {
             promise = makePromise();
         }
