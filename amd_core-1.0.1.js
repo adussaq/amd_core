@@ -33,23 +33,6 @@ var amd_core = (function () {
         }
     };
 
-    //Global Function Definitions
-    coreObj.isArray = (function () {
-        // Use compiler's own isArray when available
-        if (Array.isArray) {
-            return Array.isArray;
-        }
-
-        // Retain references to variables for performance
-        // optimization
-        var objectToStringFn = Object.prototype.toString,
-            arrayToStringResult = objectToStringFn.call([]);
-
-        return function (subject) {
-            return objectToStringFn.call(subject) === arrayToStringResult;
-        };
-    }());
-
     //Funciton definitions
     ajaxPromise = function (url) {
         var successFunc, errorFunc, promise, makePromise;
@@ -319,6 +302,24 @@ var amd_core = (function () {
         }
     };
 
+    //Global Function Definitions
+    coreObj.isArray = (function () {
+        // Use compiler's own isArray when available
+        if (Array.isArray) {
+            return Array.isArray;
+        }
+
+        // Retain references to variables for performance
+        // optimization
+        var objectToStringFn = Object.prototype.toString,
+            arrayToStringResult = objectToStringFn.call([]);
+
+        return function (subject) {
+            return objectToStringFn.call(subject) === arrayToStringResult;
+        };
+    }());
+
+    coreObj.getScript = ajaxPromise;
 
     //Start the actual work
     if (!window.jQuery) {

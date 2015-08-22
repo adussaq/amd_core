@@ -14,6 +14,7 @@ Following this a series of core functions are added onto the amd_core object. Th
 |---------------|----------------|
 |require|[*function*] Following the loading of the above required list, this loads a list of scripts described by it's input: <a href="https://github.com/adussaq/amd_core#require_object">**require_object**</a> [*required, object*]. If any script has already been loaded, it will not be loaded again. Once all scripts have loaded it executes the callback function described in the same object. |
 |isArray|[*function*] Takes in any JavaScript object, and returns true if the object is an array, false otherwise. |
+|getScript|[*function*] Takes in a the url [*string*] of a script, and returns a thenable promise. |
 
 
 ###**require_object**###
